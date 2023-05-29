@@ -19,18 +19,18 @@ contract PudgyPenguins is ERC721, ERC721Enumerable, Pausable, Ownable, ERC721Bur
         return "https://ipfs.io/ipfs/QmWXJXRdExse2YHRY21Wvh4pjRxNRQcWVhcKw4DLVnqGqs/";
     }
 
-    function pause() public onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
-    function safeMint(address to) public onlyOwner {
+    function safeMint() external {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+        _safeMint(msg.sender, tokenId);
     }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
@@ -52,3 +52,5 @@ contract PudgyPenguins is ERC721, ERC721Enumerable, Pausable, Ownable, ERC721Bur
         return super.supportsInterface(interfaceId);
     }
 }
+
+

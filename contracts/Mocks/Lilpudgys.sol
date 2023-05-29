@@ -17,9 +17,10 @@ contract LilPudgys is ERC721, ERC721Burnable, Ownable {
         return "https://ipfs.io/ipfs/QmWXJXRdExse2YHRY21Wvh4pjRxNRQcWVhcKw4DLVnqGqs/";
     }
 
-    function safeMint(address to) public onlyOwner {
+    function safeMint() external {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+        _safeMint(msg.sender, tokenId);
     }
 }
+

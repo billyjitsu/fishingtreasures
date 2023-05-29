@@ -22,7 +22,6 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
     uint256 public nftId;
 
     mapping(uint256 => TokenData) public rogsData;
-    mapping(uint256 => bool) public rogsUsed;
 
     constructor(address _pudgyPengu, address _lilPengu, address _rogs) ERC1155("test") {
         pudgyPengu = IPudgyPengu(_pudgyPengu);
@@ -63,10 +62,10 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
         for (uint256 i = 0; i < rogBalance; i++) {
             uint256 tokenId = rogs.tokenOfOwnerByIndex(msg.sender, i);
             // if the tokenId has not been claimed, increase the amount
-            if (!rogsUsed[tokenId]) {
+            if (!rogsData[tokenId].used) {
                 amount += 1;
-               // rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - (lilPudgyBalance * 1 hours) ));
-             rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer ));
+           
+                rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer ));
                 console.log("Base Reset time:", (block.timestamp + 7 days));
                 console.log("Holder Reset time:", rogsData[tokenId].timestamp);
                 console.log("Hours in numbers:", (lilPudgyBalance * 1 hours));
@@ -74,10 +73,10 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
         }
 
         // calculate a random number based on pudgyBalance.
-    uint256 randomReward = (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 100) + 1;
-    console.log("Random Number Pulled:", randomReward);
-     nftId = (randomReward * (1 + pudgyBalance)) % 5; // 0 through 4
-     console.log("Number Generated:", nftId);
+        uint256 randomReward = (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 100) + 1;
+        console.log("Random Number Pulled:", randomReward);
+         nftId = (randomReward * (1 + pudgyBalance)) % 5; // 0 through 4
+        console.log("Number Generated:", nftId);
 
     //mint batch should be here
     _mint(msg.sender, nftId, amount, "");
