@@ -52,13 +52,21 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
         // do checks and balances
 
         uint256 amount = 0;
+        //calcuate the balance of lilpudgys to make sure there is a delay
+        uint256 lilPudgyTimer = (lilPudgyBalance * 1 hours);
+        console.log("Lil Pudgy Timer:", lilPudgyTimer);
+        console.log("7 days:", 7 days);
+        if(lilPudgyTimer > 7 days){
+            lilPudgyTimer = 6 days;
+        }
         // loop over the balance and get the token ID owned by `sender` at a given `index` of its token list.
         for (uint256 i = 0; i < rogBalance; i++) {
             uint256 tokenId = rogs.tokenOfOwnerByIndex(msg.sender, i);
             // if the tokenId has not been claimed, increase the amount
             if (!rogsUsed[tokenId]) {
                 amount += 1;
-                rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - (lilPudgyBalance * 1 hours) ));
+               // rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - (lilPudgyBalance * 1 hours) ));
+             rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer ));
                 console.log("Base Reset time:", (block.timestamp + 7 days));
                 console.log("Holder Reset time:", rogsData[tokenId].timestamp);
                 console.log("Hours in numbers:", (lilPudgyBalance * 1 hours));
@@ -68,7 +76,7 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
         // calculate a random number based on pudgyBalance.
     uint256 randomReward = (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 100) + 1;
     console.log("Random Number Pulled:", randomReward);
-     nftId = (randomReward * (1 + pudgyBalance)) % 3; // 0 through 2
+     nftId = (randomReward * (1 + pudgyBalance)) % 5; // 0 through 4
      console.log("Number Generated:", nftId);
 
     //mint batch should be here
