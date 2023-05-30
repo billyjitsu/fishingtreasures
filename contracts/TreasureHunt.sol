@@ -10,7 +10,6 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
     event ReceivedUint256Array(bytes32 indexed requestId, uint256[] response);
 
     address public airnode;
-    bytes32 public endpointIdUint256;
     bytes32 public endpointIdUint256Array;
     address public sponsorWallet;
 
@@ -18,17 +17,18 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
     uint256 [] public arrayOfRandoms;
 
     mapping(bytes32 => bool) public expectingRequestWithIdToBeFulfilled;
+    //Mapping that maps the requestId to the address that made the request
+    mapping(bytes32 => address) requestToSender;
 
     constructor(address _airnodeRrp, address _pudgyPengu, address _lilPengu, address _rogs) RrpRequesterV0(_airnodeRrp) FishingTreasures(_pudgyPengu, _lilPengu, _rogs){}
 
     function setRequestParameters(
         address _airnode,
-        bytes32 _endpointIdUint256,
         bytes32 _endpointIdUint256Array,
         address _sponsorWallet
     ) external onlyOwner {
         airnode = _airnode;
-        endpointIdUint256 = _endpointIdUint256;
+       // endpointIdUint256 = _endpointIdUint256;
         endpointIdUint256Array = _endpointIdUint256Array;
         sponsorWallet = _sponsorWallet;
     }
@@ -75,6 +75,8 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
             abi.encode(bytes32("1u"), bytes32("size"), size)
         );
         expectingRequestWithIdToBeFulfilled[requestId] = true;
+        //code the msg.sender to the requestId
+        requestToSender[requestId] = msg.sender;
         emit RequestedUint256Array(requestId, size);
     }
 
@@ -93,7 +95,7 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
         }
         // Do what you want with `qrngUint256Array` here...
         arrayOfRandoms = qrngUint256Array;
-        reelInPrize(qrngUint256Array);
+        reelInPrize(requestToSender[requestId], qrngUint256Array);
         
         emit ReceivedUint256Array(requestId, qrngUint256Array);
     }

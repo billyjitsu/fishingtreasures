@@ -77,17 +77,17 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
         nftId = (randomReward * (1 + pudgyBalance)) % 5; // 0 through 4
         console.log("Number Generated:", nftId);
 
-    //mint batch should be here
-    _mint(msg.sender, nftId, amount, "");
+        //mint batch should be here
+        _mint(msg.sender, nftId, amount, "");
     }
 
-    function reelInPrize(uint256[] memory _array) internal {
+    function reelInPrize(address _requester ,uint256[] memory _array) internal {
         uint256[] memory amounts = new uint256[](_array.length);
         for(uint i = 0; i < _array.length; i++) {
             amounts[i] = 1;
         }
         //call the fishing mint function
-        _mintBatch(msg.sender, _array, amounts, "");
+        _mintBatch(_requester, _array, amounts, "");
     }
 
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
