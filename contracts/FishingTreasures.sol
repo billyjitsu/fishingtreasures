@@ -51,10 +51,10 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
         // do checks and balances
 
         uint256 amount = 0;
-        //calcuate the balance of lilpudgys to make sure there is a delay
+        //calcuate the balance of lilpudgys to make sure there is a delay if too many pudgys
         uint256 lilPudgyTimer = (lilPudgyBalance * 1 hours);
         console.log("Lil Pudgy Timer:", lilPudgyTimer);
-        console.log("7 days:", 7 days);
+        console.log("7 days in seconds:", 7 days);
         if(lilPudgyTimer > 7 days){
             lilPudgyTimer = 6 days;
         }
@@ -68,25 +68,26 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
                 rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer ));
                 console.log("Base Reset time:", (block.timestamp + 7 days));
                 console.log("Holder Reset time:", rogsData[tokenId].timestamp);
-                console.log("Hours in numbers:", (lilPudgyBalance * 1 hours));
             }
         }
 
         // calculate a random number based on pudgyBalance.
         uint256 randomReward = (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 100) + 1;
         console.log("Random Number Pulled:", randomReward);
-         nftId = (randomReward * (1 + pudgyBalance)) % 5; // 0 through 4
+        nftId = (randomReward * (1 + pudgyBalance)) % 5; // 0 through 4
         console.log("Number Generated:", nftId);
 
     //mint batch should be here
     _mint(msg.sender, nftId, amount, "");
     }
 
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        public
-        onlyOwner
-    {
-        _mintBatch(to, ids, amounts, data);
+    function reelInPrize(uint256[] memory _array) internal {
+        uint256[] memory amounts = new uint256[](_array.length);
+        for(uint i = 0; i < _array.length; i++) {
+            amounts[i] = 1;
+        }
+        //call the fishing mint function
+        _mintBatch(msg.sender, _array, amounts, "");
     }
 
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
