@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./FishingTreasures.sol";
 
 contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
-    
     event RequestedUint256Array(bytes32 indexed requestId, uint256 size);
     event ReceivedUint256Array(bytes32 indexed requestId, uint256[] response);
 
@@ -14,13 +13,22 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
     address public sponsorWallet;
 
     uint256 public singleNumber;
-    uint256 [] public arrayOfRandoms;
+    uint256[] public arrayOfRandoms;
 
     mapping(bytes32 => bool) public expectingRequestWithIdToBeFulfilled;
     //Mapping that maps the requestId to the address that made the request
     mapping(bytes32 => address) requestToSender;
 
-    constructor(address _airnodeRrp, address _pudgyPengu, address _lilPengu, address _rogs) RrpRequesterV0(_airnodeRrp) FishingTreasures(_pudgyPengu, _lilPengu, _rogs){}
+    constructor(
+        address _airnodeRrp,
+        address _pudgyPengu,
+        address _lilPengu,
+        address _rogs,
+        string memory _nftURI
+    )
+        RrpRequesterV0(_airnodeRrp)
+        FishingTreasures(_pudgyPengu, _lilPengu, _rogs, _nftURI)
+    {}
 
     function setRequestParameters(
         address _airnode,
@@ -28,7 +36,7 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
         address _sponsorWallet
     ) external onlyOwner {
         airnode = _airnode;
-       // endpointIdUint256 = _endpointIdUint256;
+        // endpointIdUint256 = _endpointIdUint256;
         endpointIdUint256Array = _endpointIdUint256Array;
         sponsorWallet = _sponsorWallet;
     }
@@ -45,7 +53,7 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
         uint256 lilPudgyTimer = (lilPudgyBalance * 1 hours);
         console.log("Lil Pudgy Timer:", lilPudgyTimer);
         console.log("7 days in seconds:", 7 days);
-        if(lilPudgyTimer > 7 days){
+        if (lilPudgyTimer > 7 days) {
             lilPudgyTimer = 6 days;
         }
         // loop over the balance and get the token ID owned by `sender` at a given `index` of its token list.
@@ -54,8 +62,8 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
             // if the tokenId has not been claimed, increase the amount
             if (!rogsData[tokenId].used) {
                 amount += 1;
-           
-                rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer ));
+
+                rogsData[tokenId] = TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer));
                 console.log("Base Reset time:", (block.timestamp + 7 days));
                 console.log("Holder Reset time:", rogsData[tokenId].timestamp);
             }
@@ -80,23 +88,23 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
         emit RequestedUint256Array(requestId, size);
     }
 
-    function fulfillUint256Array(bytes32 requestId, bytes calldata data)
-        external
-        onlyAirnodeRrp
-    {
+    function fulfillUint256Array(
+        bytes32 requestId,
+        bytes calldata data
+    ) external onlyAirnodeRrp {
         require(
             expectingRequestWithIdToBeFulfilled[requestId],
             "Request ID not known"
         );
         expectingRequestWithIdToBeFulfilled[requestId] = false;
         uint256[] memory qrngUint256Array = abi.decode(data, (uint256[]));
-        for(uint i = 0; i < qrngUint256Array.length; i++) {
-            qrngUint256Array[i] = qrngUint256Array[i] % 5;
+        for (uint i = 0; i < qrngUint256Array.length; i++) {
+            qrngUint256Array[i] = (qrngUint256Array[i] % 5) + 1;
         }
         // Do what you want with `qrngUint256Array` here...
         arrayOfRandoms = qrngUint256Array;
         reelInPrize(requestToSender[requestId], qrngUint256Array);
-        
+
         emit ReceivedUint256Array(requestId, qrngUint256Array);
     }
 }

@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./IPudgys.sol";
 import "hardhat/console.sol";
 
@@ -20,13 +21,16 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
     }
 
     uint256 public nftId;
+    string public TreasureNFT;
+
 
     mapping(uint256 => TokenData) public rogsData;
 
-    constructor(address _pudgyPengu, address _lilPengu, address _rogs) ERC1155("test") {
+    constructor(address _pudgyPengu, address _lilPengu, address _rogs, string memory _treasureNFT) ERC1155(_treasureNFT) {
         pudgyPengu = IPudgyPengu(_pudgyPengu);
         lilPengu = ILilPengu(_lilPengu);
         rogs = IRogs(_rogs);
+        TreasureNFT = _treasureNFT;
     }
 
     function setURI(string memory newuri) public onlyOwner {
@@ -90,12 +94,26 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
         _mintBatch(_requester, _array, amounts, "");
     }
 
+    // URI overide for number schemes
+    function uri(uint256 _tokenId) public view override returns (string memory)
+    {
+        return string(abi.encodePacked(TreasureNFT, Strings.toString(_tokenId), ".json"));
+    }
+
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
         internal
         whenNotPaused
         override(ERC1155, ERC1155Supply)
     {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    }
+
+    function name() public pure returns (string memory) {
+        return "OT";
+    }
+
+    function symbol() public pure returns (string memory) {
+        return "Ocean Treasures";
     }
 }
 
