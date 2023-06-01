@@ -16,7 +16,14 @@ contract PudgyPenguins is ERC721, ERC721Enumerable, Pausable, Ownable, ERC721Bur
     constructor() ERC721("PudgyPenguins", "PPG") {}
 
     function _baseURI() internal pure override returns (string memory) {
-        return "https://ipfs.io/ipfs/QmWXJXRdExse2YHRY21Wvh4pjRxNRQcWVhcKw4DLVnqGqs/";
+        return "https://totlybmjklwezytja2xllwqmdkkpwuyygavipowcsrp7mpbghkza.arweave.net/m6a8BYlS7EziaQautdoMGpT7UxgwKoe6wpRf9jwmOrI";
+    }
+
+    //return uri for certain token
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+
+        return "https://totlybmjklwezytja2xllwqmdkkpwuyygavipowcsrp7mpbghkza.arweave.net/m6a8BYlS7EziaQautdoMGpT7UxgwKoe6wpRf9jwmOrI";
     }
 
     function pause() external onlyOwner {
