@@ -12,18 +12,19 @@ contract PudgyPenguins is ERC721, ERC721Enumerable, Pausable, Ownable, ERC721Bur
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
+    string private baseTokenUri = "https://totlybmjklwezytja2xllwqmdkkpwuyygavipowcsrp7mpbghkza.arweave.net/m6a8BYlS7EziaQautdoMGpT7UxgwKoe6wpRf9jwmOrI";
 
     constructor() ERC721("PudgyPenguins", "PPG") {}
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "https://totlybmjklwezytja2xllwqmdkkpwuyygavipowcsrp7mpbghkza.arweave.net/m6a8BYlS7EziaQautdoMGpT7UxgwKoe6wpRf9jwmOrI";
+    function _baseURI() internal view override returns (string memory) {
+        return baseTokenUri;
     }
 
     //return uri for certain token
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
-        return "https://totlybmjklwezytja2xllwqmdkkpwuyygavipowcsrp7mpbghkza.arweave.net/m6a8BYlS7EziaQautdoMGpT7UxgwKoe6wpRf9jwmOrI";
+        return baseTokenUri;
     }
 
     function pause() external onlyOwner {
@@ -35,8 +36,8 @@ contract PudgyPenguins is ERC721, ERC721Enumerable, Pausable, Ownable, ERC721Bur
     }
 
     function safeMint() external {
-        uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
+        uint256 tokenId = _tokenIdCounter.current();
         _safeMint(msg.sender, tokenId);
     }
 

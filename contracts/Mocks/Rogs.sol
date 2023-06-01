@@ -30,8 +30,8 @@ contract PudgyPresent is ERC721, ERC721Enumerable, Pausable, Ownable, ERC721Burn
     }
 
     function safeMint() external {
-        uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
+        uint256 tokenId = _tokenIdCounter.current();
         _safeMint(msg.sender, tokenId);
     }
 

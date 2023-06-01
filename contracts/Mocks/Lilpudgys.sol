@@ -28,8 +28,8 @@ contract LilPudgys is ERC721, ERC721Burnable, Ownable {
     }
 
     function safeMint() external {
-        uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
+        uint256 tokenId = _tokenIdCounter.current();
         _safeMint(msg.sender, tokenId);
     }
 }
