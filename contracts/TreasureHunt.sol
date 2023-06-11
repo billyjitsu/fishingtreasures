@@ -7,6 +7,7 @@ import "./FishingTreasures.sol";
 contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
     event RequestedUint256Array(bytes32 indexed requestId, uint256 size);
     event ReceivedUint256Array(bytes32 indexed requestId, uint256[] response);
+    event WentFishing(address _from, uint256 amount);
 
     address public airnode;
     bytes32 public endpointIdUint256Array;
@@ -36,23 +37,21 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
         address _sponsorWallet
     ) external onlyOwner {
         airnode = _airnode;
-        // endpointIdUint256 = _endpointIdUint256;
         endpointIdUint256Array = _endpointIdUint256Array;
         sponsorWallet = _sponsorWallet;
     }
 
     function letsGoFishing() external {
-        //go throw the amounts of rogs for number request
+        //go through the amounts of rogs for number request
         uint256 lilPudgyBalance = lilPengu.balanceOf(msg.sender);
-        console.log("Lil Pudgy Balance:", lilPudgyBalance);
         uint256 rogBalance = rogs.balanceOf(msg.sender);
-        console.log("Rog Balance:", rogBalance);
-
+        //reset the amount to 0
         uint256 amount = 0;
         //calcuate the balance of lilpudgys to make sure there is a delay if too many pudgys
         uint256 lilPudgyTimer = (lilPudgyBalance * 1 hours);
-        console.log("Lil Pudgy Timer:", lilPudgyTimer);
-        console.log("7 days in seconds:", 7 days);
+        // console.log("Lil Pudgy Timer:", lilPudgyTimer);
+        // console.log("7 days in seconds:", 7 days);
+        //if the timer is greater than 7 days, set it to 6 days (some holders have a large amount)
         if (lilPudgyTimer > 7 days) {
             lilPudgyTimer = 6 days;
         }
@@ -60,15 +59,17 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
         for (uint256 i = 0; i < rogBalance; i++) {
             uint256 tokenId = rogs.tokenOfOwnerByIndex(msg.sender, i);
             // if the tokenId has not been claimed, increase the amount
-            if (!rogsData[tokenId].used) {
+            if (rogsData[tokenId] < block.timestamp) {
                 amount += 1;
 
-                rogsData[tokenId] = TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer));
-                console.log("Base Reset time:", (block.timestamp + 7 days));
-                console.log("Holder Reset time:", rogsData[tokenId].timestamp);
+                //rogsData[tokenId] =  ((block.timestamp + 7 days) - lilPudgyTimer);
+                rogsData[tokenId] =  ((block.timestamp + 2 minutes) - lilPudgyTimer); //Make sure this works
+                // console.log("Base Reset time:", (block.timestamp + 7 days));
+                // console.log("Holder Reset time:", rogsData[tokenId].timestamp);
             }
         }
         makeRequestUint256Array(amount);
+        emit WentFishing(msg.sender, amount);
     }
 
     function makeRequestUint256Array(uint256 size) internal {
@@ -101,8 +102,7 @@ contract TreasureHunt is RrpRequesterV0, Ownable, FishingTreasures {
         for (uint i = 0; i < qrngUint256Array.length; i++) {
             qrngUint256Array[i] = (qrngUint256Array[i] % 5) + 1;
         }
-        // Do what you want with `qrngUint256Array` here...
-        arrayOfRandoms = qrngUint256Array;
+        arrayOfRandoms = qrngUint256Array; // remove for demo (just public call of values)
         reelInPrize(requestToSender[requestId], qrngUint256Array);
 
         emit ReceivedUint256Array(requestId, qrngUint256Array);
