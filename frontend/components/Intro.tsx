@@ -85,7 +85,10 @@ const Intro = () => {
                         <h1 className="text-md font-semibold md:text-2xl text-center text-blue-400">
                           Go fishing with your Rogs
                         </h1>
-                        <h1 className="text-md md:text-xl text-center text-blue-400 pb-5">
+                        <h1 className="text-md font-semibold md:text-xl text-center text-blue-400">
+                          *Requires Rogs to fish*
+                        </h1>
+                        <h1 className="text-md md:text-lg text-center text-blue-400 pb-5">
                           Powered by API3
                         </h1>
                       </>
