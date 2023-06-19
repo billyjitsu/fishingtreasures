@@ -49,7 +49,7 @@ const connectors = connectorsForWallets([
       coinbaseWallet({ chains, appName: 'Push Up Challenge' }),
       walletConnectWallet({ chains }),
     //  argentWallet({ chains }),
-      trustWallet({ chains }),
+     // trustWallet({ chains }),
       // ledgerWallet({ chains }),
     ],
   },

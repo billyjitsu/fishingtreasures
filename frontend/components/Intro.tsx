@@ -15,6 +15,7 @@ import {
 import { ethers } from "ethers";
 import React, { useState, useEffect } from "react";
 import LoadingScreen from "./Loading";
+import one from "../images/prizes/1.jpg";
 //import RetrieveImage from "./RetrieveImage";
 import type {
   UseContractReadConfig,
@@ -27,8 +28,17 @@ import FishingContract from "../contract/fishing.json";
 const Intro = () => {
   const { address, isConnected } = useAccount();
   const [loading, setLoading] = useState<boolean>(false);
-  const [minted, setMinted] = useState<boolean>(false);
+  const [minted, setMinted] = useState<boolean>(false); 
+  const [eventData, setEventData] = useState<any>([]);
   const provider = useProvider();
+
+  const prizeImages: any = {
+    1: require("../images/prizes/1.jpg"),
+    2: require("../images/prizes/2.jpg"),
+    3: require("../images/prizes/3.jpg"),
+    4: require("../images/prizes/4.jpg"),
+    5: require("../images/prizes/5.jpg"),
+  };
 
   const url = `https://testnets.opensea.io/${address}`;
 
@@ -39,20 +49,27 @@ const Intro = () => {
     abi: FishingContract.abi,
   };
 
-  //Find the token URI of NFT ////////////////////////////
-  // const { data: nftMetaData } = useContractRead({
-  //   ...nftContractConfig,
-  //   functionName: "tokenURI",
-  //   args: [tokenId],
-  //   watch: true,
-  // } as unknown as UseContractReadConfig);
+  const listen = useContract({
+    ...contractConfig,
+    signerOrProvider: provider,
+  } as any);
 
-  // const getImage = async () => {
-  //   const nftImage = await (await fetch(nftMetaData as string)).json();
-  //   setNFT(nftImage.image);
-  //  // console.log("NFT Image", nftImage.image);
-  // };
-  ///////////////////////////////////////////////////////
+  const getPastEvents = async () => {
+    // const events = await (listen?.queryFilter(
+    //   "TreasureFound",
+    //    43354516 ,
+    //   "latest"
+    // ) ?? []);
+    // console.log(events);
+    // if (events.length > 0) {
+    //   console.log("The event has occurred");
+    //   setEventHappened(true);
+    // } else {
+    //   console.log("The event has not occurred");
+    // }
+  };
+
+  useEffect(() => {}, []);
 
   return (
     <div className="bg-black h-screen w-full ">
@@ -75,20 +92,20 @@ const Intro = () => {
 
               <div className="container relative mx-auto p-16 md:p-0">
                 <div className="flex flex-col  items-center justify-center -mt-6 md:mt-0 sm:-ml-0 md:-ml-12">
-                  <div className="text-center md:text-left md:ml-16 md:space-y-0 space-x-2 space-y-5">
+                  <div className="text-center md:text-left md:ml-16 md:space-y-0 space-x-2 space-y-5 ">
                     {!loading && !minted && (
                       <>
-                        <h1 className="text-3xl md:text-5xl font-bold text-center md:pb-3 text-blue-400 ">
+                        <h1 className="text-3xl md:text-5xl font-bold text-center md:pb-3 text-blue-400 drop-shadow-[0_2.2px_1.2px_rgba(0,0,0,0.8)] ">
                           Pudgy Fishing Treasures <br></br>
                         </h1>
 
-                        <h1 className="text-md font-semibold md:text-2xl text-center text-blue-400">
+                        <h1 className="text-md font-semibold md:text-2xl text-center text-blue-500">
                           Go fishing with your Rogs
                         </h1>
-                        <h1 className="text-md font-semibold md:text-xl text-center text-blue-400">
-                          *Requires Rogs to fish*
+                        <h1 className="text-md font-semibold md:text-xl text-center text-blue-500">
+                          *Requires a Rog to fish*
                         </h1>
-                        <h1 className="text-md md:text-lg text-center text-blue-400 pb-5">
+                        <h1 className="text-md md:text-lg text-center text-blue-500 pb-5 ">
                           Powered by API3
                         </h1>
                       </>
@@ -97,9 +114,13 @@ const Intro = () => {
                     <div className="flex flex-col max-w-s items-center text-center">
                       {isConnected && !minted && (
                         <ClaimPrizeButton
+                          address={address}
+                          provider={provider}
+                          listen={listen}
                           contractConfig={contractConfig}
                           setLoading={setLoading}
                           setMinted={setMinted}
+                          setEventData={setEventData}
                         />
                       )}
                       {!isConnected && (
@@ -111,11 +132,23 @@ const Intro = () => {
                     {minted && (
                       <div className="flex flex-col items-center text-center">
                         <h1 className="text-3xl md:text-5xl font-bold text-center md:pb-5 text-blue-400 ">
-                          Taking a minute <br></br> to pull from the Ocean
+                        {eventData.length === 0 && (<div className="animate-pulse drop-shadow-[0_2.2px_1.2px_rgba(0,0,0,0.8)]"><p>Taking a minute </p> <p>to pull from the Ocean</p> </div>)}
+                        {eventData.length > 0 && (<div className="drop-shadow-[0_2.2px_1.2px_rgba(0,0,0,0.8)]"><p>Treasure Found! </p></div>)}
                         </h1>
-                        <h1 className="text-md font-semibold md:text-2xl text-center text-blue-400">
-                            Check out your NFTs on OpenSea
-                            </h1>
+                        
+
+                        <div className="flex flex-col md:flex-row space-x-3 m-5">
+                          {eventData.map((numStr: any, index: any) => (
+                            <Image key={index} src={prizeImages[numStr]} width={150} alt={`Prize ${numStr}`} />
+                          ))}
+                          
+                        </div>
+
+                        {eventData.length > 0 && (
+                          <>
+                        <h1 className="text-md font-semibold md:text-2xl text-center text-blue-500">
+                          Check out your NFTs on OpenSea
+                        </h1>
                         <a
                           className="text-xl font-bold text-blue-500 inline-block whitespace-nowrap uppercase underline mb-5"
                           href={url}
@@ -123,13 +156,16 @@ const Intro = () => {
                         >
                           Fishing Treasures
                         </a>
+                        
 
                         <button
                           className=" bg-blue-500 hover:bg-blue-600 rounded-full px-12 py-2  text-white font-bold"
-                          onClick={() => setMinted(false)}
+                          onClick={() => {setMinted(false);setEventData([]);}}
                         >
                           Close
                         </button>
+                        </>
+                        )}
                       </div>
                     )}
                   </div>
