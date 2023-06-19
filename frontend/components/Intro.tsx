@@ -26,7 +26,7 @@ import fishingPull from "../images/fishpull.webp"
 
 const Intro = () => {
   const { address, isConnected } = useAccount();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [minted, setMinted] = useState<boolean>(false); 
   const [eventData, setEventData] = useState<any>([]);
   const provider = useProvider();
