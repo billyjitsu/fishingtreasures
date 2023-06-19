@@ -11,18 +11,14 @@ import type {
 import { useEffect } from "react";
 
 interface ClaimPrizeButtonProps {
-  address: string;
   listen: any; // TODO: make this properly typed to an address + ABI
   contractConfig: any; // TODO: make this properly typed to an address + ABI
-  provider: any; // TODO: make this properly typed to an address + ABI
   setLoading: (value: React.SetStateAction<boolean>) => void;
   setMinted: (value: React.SetStateAction<boolean>) => void;
   setEventData: (value: React.SetStateAction<any>) => void;
 }
 
 const ClaimPrizeButton = ({
-  address,
-  provider,
   listen,
   contractConfig,
   setLoading,
@@ -48,21 +44,6 @@ const ClaimPrizeButton = ({
     isSuccess: iscollectSuccess,
   } = useContractWrite(collectConfig as UseContractWriteConfig);
 
-  // const{ data: waitData } = useWaitForTransaction({
-  //   hash: collectData?.hash,
-  //  // confirmationCount: 1,
-  // } as any);
-
-  //   const temp = async ()=> {
-  //      let newTEmp: any = provider?.getLogs({
-  //     address: contractConfig.address,
-  //     fromBlock: 36734939 ,
-  //     toBlock: "latest",
-
-  //   });
-  //   console.log(newTEmp)
-  // }
-
   //TransferBatch (index_topic_1 address operator, index_topic_2 address from, index_topic_3 address to, uint256[] ids, uint256[] values)
   listen.on("TransferBatch", (from: any, to: any, value: any, event: any) => {
     
@@ -81,9 +62,6 @@ const ClaimPrizeButton = ({
     // }
   });
 
-  // console.log("temp data",temp);
-  // const log = data.logs.find((log) => log.address === contractAddress);
-
   const goFishFunction = async () => {
     try {
       if (typeof goFish === "function") {
@@ -98,9 +76,6 @@ const ClaimPrizeButton = ({
     }
   };
 
-  // useEffect(() => {
-  //   temp();
-  //     })
   ///////////////////////////////////////////////////////
   return (
     <>
