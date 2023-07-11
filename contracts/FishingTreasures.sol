@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./IPudgys.sol";
-import "hardhat/console.sol";
 
 contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
 
@@ -16,11 +15,6 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
     IPudgyPengu pudgyPengu;
     ILilPengu lilPengu;
     IRogs rogs;
-
-    // struct TokenData {
-    // bool used;
-    // uint256 timestamp;
-    // }
 
     //uint256 public nftId;
     string public TreasureNFT;
@@ -81,47 +75,6 @@ contract FishingTreasures is ERC1155, Ownable, Pausable, ERC1155Supply {
     function symbol() public pure returns (string memory) {
         return "OT";
     }
-
-    // @Dev: This sample pulls in a single contract with 
-    // function fish() external {
-    //     uint256 pudgyBalance = pudgyPengu.balanceOf(msg.sender);
-    //     console.log("Pudgy Balance:", pudgyBalance);
-    //     uint256 lilPudgyBalance = lilPengu.balanceOf(msg.sender);
-    //     console.log("Lil Pudgy Balance:", lilPudgyBalance);
-    //     uint256 rogBalance = rogs.balanceOf(msg.sender);
-    //     console.log("Rog Balance:", rogBalance);
-    //     // do checks and balances
-
-    //     uint256 amount = 0;
-    //     //calcuate the balance of lilpudgys to make sure there is a delay if too many pudgys
-    //     uint256 lilPudgyTimer = (lilPudgyBalance * 1 hours);
-    //     console.log("Lil Pudgy Timer:", lilPudgyTimer);
-    //     console.log("7 days in seconds:", 7 days);
-    //     if(lilPudgyTimer > 7 days){
-    //         lilPudgyTimer = 6 days;
-    //     }
-    //     // loop over the balance and get the token ID owned by `sender` at a given `index` of its token list.
-    //     for (uint256 i = 0; i < rogBalance; i++) {
-    //         uint256 tokenId = rogs.tokenOfOwnerByIndex(msg.sender, i);
-    //         // if the tokenId has not been claimed, increase the amount
-    //         if (!rogsData[tokenId].used) {
-    //             amount += 1;
-           
-    //             rogsData[tokenId]= TokenData(true, ((block.timestamp + 7 days) - lilPudgyTimer ));
-    //             console.log("Base Reset time:", (block.timestamp + 7 days));
-    //             console.log("Holder Reset time:", rogsData[tokenId].timestamp);
-    //         }
-    //     }
-
-    //     // calculate a random number based on pudgyBalance.
-    //     uint256 randomReward = (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 100) + 1;
-    //     console.log("Random Number Pulled:", randomReward);
-    //     nftId = (randomReward * (1 + pudgyBalance)) % 5; // 0 through 4
-    //     console.log("Number Generated:", nftId);
-
-    //     //mint batch should be here
-    //     _mint(msg.sender, nftId, amount, "");
-    // }
 }
 
 
