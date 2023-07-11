@@ -52,6 +52,7 @@ const Intro = () => {
   };
 
   const delegateCheck = async () => {
+    if (address) {
     const delegationsByDelegate = await dc.getDelegationsByDelegate(address);
     console.log("delegationsByDelegate", delegationsByDelegate);
     console.log("delegate wallet", delegationsByDelegate[0].vault);
@@ -60,6 +61,9 @@ const Intro = () => {
       delegationsByDelegate[0].vault
     );
     console.log("isDelegateForAll", isDelegateForAll);
+  } else {
+    console.error("address is undefined");
+ }
     // const tokenLevelDelegations = await dc.getTokenLevelDelegations(vault);
     // console.log("tokenLevelDelegations", tokenLevelDelegations);
   };
